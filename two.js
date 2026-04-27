@@ -1,50 +1,84 @@
-let imports = JSON.parse(localStorage.getItem("imports")) || [];
-let sales = JSON.parse(localStorage.getItem("sales")) || [];
+let batches = JSON.parse(localStorage.getItem("batches")) || [];
 
-function addImport() {
-  let qty = Number(document.getElementById("importQty").value);
+/* ADD NEW BATCH */
+function addBatch() {
+  let bottles = Number(document.getElementById("bottles").value);
+  let size = Number(document.getElementById("size").value);
 
-  if (!qty) return alert("Enter quantity!");
+  if (!bottles || !size) {
+    alert("Fill all fields!");
+    return;
+  }
 
-  imports.push(qty);
-  localStorage.setItem("imports", JSON.stringify(imports));
+  let batch = {
+    id: Date.now(),
+    bottles,
+    size,
+    remaining: bottles * size,
+    sales: []
+  };
 
-  document.getElementById("importQty").value = "";
+  batches.push(batch);
+  localStorage.setItem("batches", JSON.stringify(batches));
+
+  document.getElementById("bottles").value = "";
+  document.getElementById("size").value = "";
+
   updateUI();
 }
 
-function addSale() {
-  let name = document.getElementById("customer").value;
-  let qty = Number(document.getElementById("saleQty").value);
+/* ADD SALE */
+function addSale(batchId) {
+  let name = prompt("Customer name:");
+  let litres = Number(prompt("How many litres?"));
+  let price = Number(prompt("Price per litre (default 1500):")) || 1500;
 
-  if (!name || !qty) return alert("Fill all fields!");
+  if (!name || !litres) return;
 
-  sales.push({ name, qty });
-  localStorage.setItem("sales", JSON.stringify(sales));
+  let batch = batches.find(b => b.id === batchId);
 
-  document.getElementById("customer").value = "";
-  document.getElementById("saleQty").value = "";
+  if (litres > batch.remaining) {
+    alert("Not enough stock!");
+    return;
+  }
 
+  let sale = {
+    name,
+    litres,
+    total: litres * price
+  };
+
+  batch.sales.push(sale);
+  batch.remaining -= litres;
+
+  localStorage.setItem("batches", JSON.stringify(batches));
   updateUI();
 }
 
+/* DISPLAY EVERYTHING */
 function updateUI() {
-  let totalImports = imports.reduce((a, b) => a + b, 0);
-  let totalSales = sales.reduce((a, s) => a + s.qty, 0);
+  let container = document.getElementById("batchesContainer");
+  container.innerHTML = "";
 
-  let stock = totalImports - totalSales;
+  batches.forEach(batch => {
+    let div = document.createElement("div");
+    div.className = "batch";
 
-  document.getElementById("stock").innerText =
-    "Remaining: " + stock + " kg";
+    div.innerHTML = `
+      <h3>Batch: ${batch.bottles} bottles × ${batch.size}L</h3>
+      <div class="remaining">Remaining: ${batch.remaining} L</div>
+      <button onclick="addSale(${batch.id})">+ Add Sale</button>
 
-  let list = document.getElementById("salesList");
-  list.innerHTML = "";
+      <ul>
+        ${batch.sales.map(s => 
+          `<li>${s.name} bought ${s.litres}L — Ksh ${s.total}</li>`
+        ).join("")}
+      </ul>
+    `;
 
-  sales.forEach(s => {
-    let li = document.createElement("li");
-    li.textContent = `${s.name} bought ${s.qty} kg`;
-    list.appendChild(li);
+    container.appendChild(div);
   });
 }
 
+/* LOAD */
 updateUI();
