@@ -4,32 +4,27 @@
   <meta charset="UTF-8">
   <title>Honey Tracker 🍯</title>
 
-  <!-- CSS -->
   <link rel="stylesheet" href="style.css">
 
-  <!-- Font -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
 
 <div class="container">
-  <h1>🍯 Honey Tracker</h1>
+  <h1>🍯 Honey Business Tracker</h1>
 
-  <h2>Add Import</h2>
-  <input type="number" id="importQty" placeholder="Quantity (kg)">
-  <button onclick="addImport()">Add Import</button>
+  <!-- ADD BATCH -->
+  <div class="card">
+    <h2>Add New Stock</h2>
+    <input type="number" id="bottles" placeholder="Number of bottles (e.g. 11)">
+    <input type="number" id="size" placeholder="Size per bottle (e.g. 3L)">
+    <button onclick="addBatch()">Add Batch</button>
+  </div>
 
-  <h2>Add Sale</h2>
-  <input type="text" id="customer" placeholder="Customer Name">
-  <input type="number" id="saleQty" placeholder="Quantity">
-  <button onclick="addSale()">Add Sale</button>
+  <!-- BATCHES -->
+  <div id="batchesContainer"></div>
 
-  <h2>Stock</h2>
-  <p id="stock">0</p>
-
-  <h2>Sales</h2>
-  <ul id="salesList"></ul>
 </div>
 
 <script src="script.js"></script>
