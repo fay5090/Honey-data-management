@@ -1,18 +1,13 @@
-function doPost(e) {
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-
-  var data = JSON.parse(e.postData.contents);
-
-  sheet.appendRow([
-    new Date(),
-    data.batch,
-    data.customer,
-    data.litres,
-    data.price,
-    data.total
-  ]);
-
-  return ContentService
-    .createTextOutput("Success")
-    .setMimeType(ContentService.MimeType.TEXT);
-}
+fetch("https://script.google.com/macros/s/AKfycbyvkUqRK-gsNep0FKWmEQ9WauphmzxqPnFu8X4b2l_SkOscDtfIdcu2Xq8bAd8_Sw/exec", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify({
+    batch: batch.bottles + "x" + batch.size + "L",
+    customer: name,
+    litres: litres,
+    price: price,
+    total: total
+  })
+});
