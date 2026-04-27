@@ -1,59 +1,136 @@
+/* RESET */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* BODY */
 body {
   font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #fff8e7, #ffe0a3);
-  margin: 0;
+  background: linear-gradient(135deg, #fff7e6, #ffe5b4);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+/* MAIN CONTAINER */
 .container {
-  max-width: 420px;
-  margin: 50px auto;
-  background: white;
-  padding: 25px;
-  border-radius: 18px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  width: 95%;
+  max-width: 500px;
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 25px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.6s ease;
 }
 
+/* TITLE */
 h1 {
   text-align: center;
-  color: #c57c00;
+  font-size: 28px;
+  color: #d17b00;
+  margin-bottom: 20px;
 }
 
+/* SECTION HEADINGS */
 h2 {
-  margin-top: 20px;
+  margin-top: 25px;
+  margin-bottom: 8px;
+  font-size: 15px;
+  color: #555;
+  font-weight: 500;
+}
+
+/* INPUTS */
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid #eee;
+  background: #fafafa;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+input:focus {
+  border-color: #ffb703;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(255, 183, 3, 0.3);
+  outline: none;
+}
+
+/* BUTTON */
+button {
+  width: 100%;
+  margin-top: 12px;
+  padding: 14px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #ffb703, #fb8500);
+  color: white;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+button:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* STOCK CARD */
+#stock {
+  margin-top: 10px;
+  padding: 15px;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #fff3cd, #ffe8a1);
+  text-align: center;
+  font-weight: 600;
+  color: #7a5c00;
   font-size: 16px;
 }
 
-input {
-  width: 100%;
-  padding: 12px;
-  margin-top: 8px;
-  border-radius: 10px;
-  border: 1px solid #ddd;
-}
-
-button {
-  width: 100%;
+/* SALES LIST */
+ul {
+  list-style: none;
   margin-top: 10px;
-  padding: 12px;
-  border: none;
-  border-radius: 10px;
-  background: linear-gradient(135deg, #ffb703, #fb8500);
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
 }
 
-#stock {
-  background: #fff3cd;
-  padding: 12px;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: bold;
-}
-
+/* EACH SALE ITEM */
 li {
-  background: #f9f9f9;
-  padding: 10px;
-  border-radius: 10px;
-  margin-top: 8px;
+  background: #fffaf0;
+  padding: 12px 15px;
+  border-radius: 12px;
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  transition: 0.2s;
+}
+
+li:hover {
+  transform: scale(1.02);
+  background: #fff3cd;
+}
+
+/* SCROLL (if many sales) */
+ul {
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+/* ANIMATION */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
