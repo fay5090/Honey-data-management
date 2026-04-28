@@ -77,7 +77,8 @@ function sell(index) {
 
   fetch(url);
 
-  alert("Sale recorded ✔");
+    alert("Sale recorded ✔");
 
   renderBatches();
+
 }
