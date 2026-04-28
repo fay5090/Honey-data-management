@@ -45,6 +45,11 @@ input {
   border-radius: 12px;
   border: 1px solid #eee;
   background: #fafafa;
+  outline: none;
+}
+
+input:focus {
+  border-color: #ffb703;
 }
 
 button {
@@ -57,4 +62,8 @@ button {
   color: white;
   font-weight: bold;
   cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
 }
