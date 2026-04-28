@@ -54,7 +54,7 @@ function renderBatches() {
   });
 }
 
-// SELL FUNCTION (FIXED + CLEAN)
+// SELL FUNCTION (FIXED)
 function sell(index) {
   const name = document.getElementById(`name-${index}`).value;
   const litres = Number(document.getElementById(`litres-${index}`).value);
@@ -76,21 +76,20 @@ function sell(index) {
 
   batch.remaining -= litres;
 
-  const sale = { name, litres, price, total };
-  batch.sales.push(sale);
+  batch.sales.push({ name, litres, price, total });
 
-  // SEND TO GOOGLE SHEETS (CORS SAFE MODE)
+  // 🚀 SEND TO GOOGLE SHEETS (WORKING VERSION)
   fetch("https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec", {
     method: "POST",
-    mode: "no-cors",
-    body: JSON.stringify({
+    body: new URLSearchParams({
       batch: `${batch.bottles}x${batch.size}L`,
       customer: name,
-      litres,
-      price,
-      total
+      litres: litres,
+      price: price,
+      total: total
     })
-  });
+  })
+  .catch(err => console.log("Error:", err));
 
   alert("Sale recorded ✔");
 
