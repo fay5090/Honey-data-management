@@ -1,6 +1,5 @@
 let batches = [];
 
-// ADD BATCH
 function addBatch() {
   const bottles = document.getElementById("bottles").value;
   const size = document.getElementById("size").value;
@@ -20,7 +19,6 @@ function addBatch() {
   renderBatches();
 }
 
-// RENDER
 function renderBatches() {
   const container = document.getElementById("batchesContainer");
   container.innerHTML = "";
@@ -46,7 +44,6 @@ function renderBatches() {
   });
 }
 
-// SELL
 function sell(index) {
   const name = document.getElementById(`name-${index}`).value;
   const litres = Number(document.getElementById(`litres-${index}`).value);
@@ -67,6 +64,7 @@ function sell(index) {
   const total = litres * price;
 
   batch.remaining -= litres;
+
   batch.sales.push({ name, litres, price, total });
 
   const url =
