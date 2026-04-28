@@ -1,84 +1,105 @@
-let batches = JSON.parse(localStorage.getItem("batches")) || [];
+let batches = [];
 
-/* ADD NEW BATCH */
+// ADD NEW BATCH
 function addBatch() {
-  let bottles = Number(document.getElementById("bottles").value);
-  let size = Number(document.getElementById("size").value);
+  const bottles = document.getElementById("bottles").value;
+  const size = document.getElementById("size").value;
 
   if (!bottles || !size) {
-    alert("Fill all fields!");
+    alert("Please enter bottles and size");
     return;
   }
 
-  let batch = {
-    id: Date.now(),
-    bottles,
-    size,
-    remaining: bottles * size,
+  const batch = {
+    bottles: Number(bottles),
+    size: Number(size),
+    remaining: Number(bottles) * Number(size),
     sales: []
   };
 
   batches.push(batch);
-  localStorage.setItem("batches", JSON.stringify(batches));
-
-  document.getElementById("bottles").value = "";
-  document.getElementById("size").value = "";
-
-  updateUI();
+  renderBatches();
 }
 
-/* ADD SALE */
-function addSale(batchId) {
-  let name = prompt("Customer name:");
-  let litres = Number(prompt("How many litres?"));
-  let price = Number(prompt("Price per litre (default 1500):")) || 1500;
+// DISPLAY ALL BATCHES
+function renderBatches() {
+  const container = document.getElementById("batchesContainer");
+  container.innerHTML = "";
 
-  if (!name || !litres) return;
+  batches.forEach((batch, index) => {
+    const div = document.createElement("div");
+    div.className = "batch";
 
-  let batch = batches.find(b => b.id === batchId);
+    div.innerHTML = `
+      <h3>Batch ${index + 1}</h3>
+      <p>${batch.bottles} bottles × ${batch.size}L</p>
+      <div class="remaining">Remaining: ${batch.remaining}L</div>
 
-  if (litres > batch.remaining) {
+      <input type="text" placeholder="Customer name" id="name-${index}">
+      <input type="number" placeholder="Litres sold" id="litres-${index}">
+      <input type="number" placeholder="Price per litre" id="price-${index}">
+      <button onclick="sell(${index})">Record Sale</button>
+
+      <ul id="sales-${index}"></ul>
+    `;
+
+    container.appendChild(div);
+
+    // SHOW SALES HISTORY
+    const list = div.querySelector(`#sales-${index}`);
+    batch.sales.forEach(sale => {
+      const li = document.createElement("li");
+      li.textContent = `${sale.name} bought ${sale.litres}L for ${sale.total}`;
+      list.appendChild(li);
+    });
+  });
+}
+
+// RECORD SALE
+function sell(index) {
+  const name = document.getElementById(`name-${index}`).value;
+  const litres = document.getElementById(`litres-${index}`).value;
+  const price = document.getElementById(`price-${index}`).value;
+
+  if (!name || !litres || !price) {
+    alert("Fill all fields");
+    return;
+  }
+
+  const batch = batches[index];
+  const litresNum = Number(litres);
+  const priceNum = Number(price);
+  const total = litresNum * priceNum;
+
+  if (litresNum > batch.remaining) {
     alert("Not enough stock!");
     return;
   }
 
-  let sale = {
-    name,
-    litres,
-    total: litres * price
-  };
+  batch.remaining -= litresNum;
 
-  batch.sales.push(sale);
-  batch.remaining -= litres;
-
-  localStorage.setItem("batches", JSON.stringify(batches));
-  updateUI();
-}
-
-/* DISPLAY EVERYTHING */
-function updateUI() {
-  let container = document.getElementById("batchesContainer");
-  container.innerHTML = "";
-
-  batches.forEach(batch => {
-    let div = document.createElement("div");
-    div.className = "batch";
-
-    div.innerHTML = `
-      <h3>Batch: ${batch.bottles} bottles × ${batch.size}L</h3>
-      <div class="remaining">Remaining: ${batch.remaining} L</div>
-      <button onclick="addSale(${batch.id})">+ Add Sale</button>
-
-      <ul>
-        ${batch.sales.map(s => 
-          `<li>${s.name} bought ${s.litres}L — Ksh ${s.total}</li>`
-        ).join("")}
-      </ul>
-    `;
-
-    container.appendChild(div);
+  batch.sales.push({
+    name: name,
+    litres: litresNum,
+    price: priceNum,
+    total: total
   });
-}
 
-/* LOAD */
-updateUI();
+  // OPTIONAL: send to Google Sheets (SAFE version)
+  fetch("https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      batch: `${batch.bottles}x${batch.size}L`,
+      customer: name,
+      litres: litresNum,
+      price: priceNum,
+      total: total
+    })
+  })
+  .catch(err => console.log("Fetch error:", err));
+
+  renderBatches();
+}
