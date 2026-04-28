@@ -1,6 +1,6 @@
 let batches = [];
 
-// ADD NEW BATCH
+// ADD BATCH
 function addBatch() {
   const bottles = document.getElementById("bottles").value;
   const size = document.getElementById("size").value;
@@ -20,23 +20,22 @@ function addBatch() {
   renderBatches();
 }
 
-// RENDER BATCHES
+// RENDER
 function renderBatches() {
   const container = document.getElementById("batchesContainer");
   container.innerHTML = "";
 
   batches.forEach((batch, index) => {
     const div = document.createElement("div");
-    div.className = "batch";
 
     div.innerHTML = `
       <h3>Batch ${index + 1}</h3>
-      <p>${batch.bottles} bottles × ${batch.size}L</p>
-      <div>Remaining: ${batch.remaining}L</div>
+      <p>${batch.bottles} × ${batch.size}L</p>
+      <p>Remaining: ${batch.remaining}L</p>
 
-      <input id="name-${index}" placeholder="Customer name">
-      <input id="litres-${index}" type="number" placeholder="Litres sold">
-      <input id="price-${index}" type="number" placeholder="Price per litre">
+      <input id="name-${index}" placeholder="Customer">
+      <input id="litres-${index}" type="number" placeholder="Litres">
+      <input id="price-${index}" type="number" placeholder="Price">
 
       <button onclick="sell(${index})">Record Sale</button>
 
@@ -44,17 +43,10 @@ function renderBatches() {
     `;
 
     container.appendChild(div);
-
-    const list = div.querySelector(`#sales-${index}`);
-    batch.sales.forEach(sale => {
-      const li = document.createElement("li");
-      li.textContent = `${sale.name} bought ${sale.litres}L = ${sale.total}`;
-      list.appendChild(li);
-    });
   });
 }
 
-// SELL FUNCTION (CLEAN + WORKING)
+// SELL
 function sell(index) {
   const name = document.getElementById(`name-${index}`).value;
   const litres = Number(document.getElementById(`litres-${index}`).value);
@@ -75,28 +67,18 @@ function sell(index) {
   const total = litres * price;
 
   batch.remaining -= litres;
+  batch.sales.push({ name, litres, price, total });
 
-  batch.sales.push({
-    name,
-    litres,
-    price,
-    total
-  });
-
-  // 🚀 SEND TO GOOGLE SHEETS (NO CORS ISSUE FIX)
   const url =
     "https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec"
-    + `?batch=${encodeURIComponent(batch.bottles + "x" + batch.size + "L")}`
-    + `&customer=${encodeURIComponent(name)}`
+    + `?batch=${batch.bottles}x${batch.size}L`
+    + `&customer=${name}`
     + `&litres=${litres}`
     + `&price=${price}`
     + `&total=${total}`;
 
-  fetch(url)
-    .then(() => console.log("Sent to sheet ✔"))
-    .catch(err => console.log("Error:", err));
+  fetch(url);
 
   alert("Sale recorded ✔");
-
   renderBatches();
 }
