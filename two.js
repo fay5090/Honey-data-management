@@ -86,14 +86,12 @@ function sell(index) {
   });
 
   // OPTIONAL: send to Google Sheets (SAFE version)
-  fetch("https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec", {
-  method: "POST",
-  mode: "no-cors",
-  body: new URLSearchParams({
-    batch: `${batch.bottles}x${batch.size}L`,
-    customer: name,
-    litres: litres,
-    price: price,
-    total: total
-  })
-});
+  const url = "https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec"
+  + `?batch=${encodeURIComponent(batch.bottles + "x" + batch.size + "L")}`
+  + `&customer=${encodeURIComponent(name)}`
+  + `&litres=${litres}`
+  + `&price=${price}`
+  + `&total=${total}`;
+
+fetch(url)
+.catch(err => console.log(err));
