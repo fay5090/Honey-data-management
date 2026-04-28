@@ -80,16 +80,16 @@ function sell(index) {
 
   // 🚀 SEND TO GOOGLE SHEETS (WORKING VERSION)
   fetch("https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec", {
-    method: "POST",
-    body: new URLSearchParams({
-      batch: `${batch.bottles}x${batch.size}L`,
-      customer: name,
-      litres: litres,
-      price: price,
-      total: total
-    })
+  method: "POST",
+  body: new URLSearchParams({
+    batch: `${batch.bottles}x${batch.size}L`,
+    customer: name,
+    litres: litres,
+    price: price,
+    total: total
   })
-  .catch(err => console.log("Error:", err));
+})
+.catch(err => console.log("Error:", err));
 
   alert("Sale recorded ✔");
 
