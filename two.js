@@ -1,15 +1,16 @@
 let batches = [];
 
+// ADD NEW BATCH
 function addBatch() {
-  let bottles = document.getElementById("bottles").value;
-  let size = document.getElementById("size").value;
+  const bottles = document.getElementById("bottles").value;
+  const size = document.getElementById("size").value;
 
   if (!bottles || !size) {
-    alert("Enter bottles and size");
+    alert("Please enter bottles and size");
     return;
   }
 
-  let batch = {
+  const batch = {
     bottles: Number(bottles),
     size: Number(size),
     remaining: Number(bottles) * Number(size),
@@ -20,12 +21,13 @@ function addBatch() {
   renderBatches();
 }
 
+// DISPLAY ALL BATCHES
 function renderBatches() {
-  let container = document.getElementById("batchesContainer");
+  const container = document.getElementById("batchesContainer");
   container.innerHTML = "";
 
   batches.forEach((batch, index) => {
-    let div = document.createElement("div");
+    const div = document.createElement("div");
     div.className = "batch";
 
     div.innerHTML = `
@@ -42,48 +44,58 @@ function renderBatches() {
     `;
 
     container.appendChild(div);
+
+    // SHOW SALES HISTORY
+    const list = div.querySelector(`#sales-${index}`);
+    batch.sales.forEach(sale => {
+      const li = document.createElement("li");
+      li.textContent = `${sale.name} bought ${sale.litres}L for ${sale.total}`;
+      list.appendChild(li);
+    });
   });
 }
 
+// RECORD SALE
 function sell(index) {
-  let name = document.getElementById(`name-${index}`).value;
-  let litres = document.getElementById(`litres-${index}`).value;
-  let price = document.getElementById(`price-${index}`).value;
+  const name = document.getElementById(`name-${index}`).value;
+  const litres = document.getElementById(`litres-${index}`).value;
+  const price = document.getElementById(`price-${index}`).value;
 
   if (!name || !litres || !price) {
     alert("Fill all fields");
     return;
   }
 
-  let total = Number(litres) * Number(price);
+  const batch = batches[index];
+  const litresNum = Number(litres);
+  const priceNum = Number(price);
+  const total = litresNum * priceNum;
 
-  let batch = batches[index];
-
-  if (litres > batch.remaining) {
+  if (litresNum > batch.remaining) {
     alert("Not enough stock!");
     return;
   }
 
-  batch.remaining -= litres;
+  batch.remaining -= litresNum;
 
   batch.sales.push({
-    name,
-    litres,
-    price,
-    total
+    name: name,
+    litres: litresNum,
+    price: priceNum,
+    total: total
   });
 
-  // SEND TO GOOGLE SHEETS
-  fetch("https://script.google.com/macros/s/AKfycbyvkUqRK-gsNep0FKWmEQ9WauphmzxqPnFu8X4b2l_SkOscDtfIdcu2Xq8bAd8_Sw/exec", {
+  // OPTIONAL: send to Google Sheets (SAFE version)
+  fetch("https://script.google.com/macros/library/d/1KNMCQwoEmXpdMrcInvlNuBXa4mlNXBvs1dO87E5eUBNDVLvb08bm5zIf/2", {
     method: "POST",
     body: JSON.stringify({
       batch: `${batch.bottles}x${batch.size}L`,
       customer: name,
-      litres: Number(litres),
-      price: Number(price),
+      litres: litresNum,
+      price: priceNum,
       total: total
     })
-  });
+  }).catch(err => console.log("Fetch error:", err));
 
   renderBatches();
 }
