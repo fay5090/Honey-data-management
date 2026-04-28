@@ -67,7 +67,6 @@ function sell(index) {
   const total = litres * price;
 
   batch.remaining -= litres;
-
   batch.sales.push({ name, litres, price, total });
 
   const url =
