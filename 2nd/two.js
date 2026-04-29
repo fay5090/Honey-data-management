@@ -68,7 +68,7 @@ function sell(index) {
   batch.sales.push({ name, litres, price, total });
 
   const url =
-    "https://script.google.com/macros/s/AKfycby0wP_ZigZR9JUdXHMLY2QA9s2OOyt-3TZf4T_w_GbII1L18auVBbMGLRs5KIUZQA_n/exec"
+    "https://script.google.com/macros/s/AKfycbyQltu3k7X5w9b3xgu21OLK-nluDTx2NwURVbVpgRzS84B0KYjdKp7I_u9uScELbyRz/exec"
     + `?batch=${batch.bottles}x${batch.size}L`
     + `&customer=${name}`
     + `&litres=${litres}`
