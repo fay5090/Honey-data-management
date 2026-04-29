@@ -36,16 +36,17 @@ function sell(index) {
   + `&total=${total}`;
 
   // Updated fetch with proper settings to stop the CORS error
+   // Change ONLY the fetch part in your two.js
   fetch(url, {
-    method: 'GET',
-    mode: 'no-cors', // This tells the browser: "Don't worry about the response, just send it."
+    method: "GET",
+    mode: "no-cors", // THIS IS THE KEY
+    cache: "no-cache"
   })
   .then(() => {
-    alert("Sale recorded and sent to Sheets!");
-    renderBatches(); // Refresh the screen
+    alert("Data sent! Check your sheet.");
+    renderBatches();
   })
   .catch(err => {
-    console.error("Error sending data:", err);
-    alert("Failed to send data to Sheets.");
+    console.log("If the sheet updated, ignore this error:", err);
   });
 }
