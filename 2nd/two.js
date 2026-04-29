@@ -36,17 +36,15 @@ function sell(index) {
   + `&total=${total}`;
 
   // Updated fetch with proper settings to stop the CORS error
-   // Change ONLY the fetch part in your two.js
-  fetch(url, {
-    method: "GET",
-    mode: "no-cors", // THIS IS THE KEY
-    cache: "no-cache"
-  })
-  .then(() => {
-    alert("Data sent! Check your sheet.");
-    renderBatches();
-  })
-  .catch(err => {
-    console.log("If the sheet updated, ignore this error:", err);
-  });
+   fetch(url, {
+  method: "GET",
+  mode: "no-cors",
+  credentials: "omit"
+})
+.then(() => {
+  alert("Sale recorded! Check your spreadsheet.");
+  renderBatches(); 
+})
+.catch(err => console.log("Ignore this error if data arrived:", err));
+
 }
