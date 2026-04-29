@@ -1,53 +1,7 @@
-let batches = [];
-
-function addBatch() {
-  const bottles = document.getElementById("bottles").value;
-  const size = document.getElementById("size").value;
-
-  if (!bottles || !size) {
-    alert("Please enter bottles and size");
-    return;
-  }
-
-  batches.push({
-    bottles: Number(bottles),
-    size: Number(size),
-    remaining: Number(bottles) * Number(size),
-    sales: []
-  });
-
-  renderBatches();
-}
-
-function renderBatches() {
-  const container = document.getElementById("batchesContainer");
-  container.innerHTML = "";
-
-  batches.forEach((batch, index) => {
-    const div = document.createElement("div");
-
-    div.innerHTML = `
-      <h3>Batch ${index + 1}</h3>
-      <p>${batch.bottles} × ${batch.size}L</p>
-      <p>Remaining: ${batch.remaining}L</p>
-
-      <input id="name-${index}" placeholder="Customer">
-      <input id="litres-${index}" type="number" placeholder="Litres">
-      <input id="price-${index}" type="number" placeholder="Price">
-
-      <button onclick="sell(${index})">Record Sale</button>
-
-      <ul id="sales-${index}"></ul>
-    `;
-
-    container.appendChild(div);
-  });
-}
-
 function sell(index) {
   const name = document.getElementById(`name-${index}`).value;
-  const litres = Number(document.getElementById(`litres-${index}`).value);
-  const price = Number(document.getElementById(`price-${index}`).value);
+  const litres = document.getElementById(`litres-${index}`).value;
+  const price = document.getElementById(`price-${index}`).value;
 
   if (!name || !litres || !price) {
     alert("Fill all fields");
@@ -55,30 +9,43 @@ function sell(index) {
   }
 
   const batch = batches[index];
+  const litresNum = Number(litres);
+  const priceNum = Number(price);
+  const total = litresNum * priceNum;
 
-  if (litres > batch.remaining) {
+  if (litresNum > batch.remaining) {
     alert("Not enough stock!");
     return;
   }
 
-  const total = litres * price;
+  batch.remaining -= litresNum;
 
-  batch.remaining -= litres;
+  batch.sales.push({
+    name: name,
+    litres: litresNum,
+    price: priceNum,
+    total: total
+  });
 
-  batch.sales.push({ name, litres, price, total });
+  // THE FIX IS HERE
+  const url = "https://script.google.com/macros/s/AKfycbwLws4Ve9UWKinyH6cSqNyd9oBiQ71es1_0E4-sFOlmOUeX7Q-BmPw5DjHIfn4rWugH/exec"
+  + `?batch=${encodeURIComponent(batch.bottles + "x" + batch.size + "L")}`
+  + `&customer=${encodeURIComponent(name)}`
+  + `&litres=${litres}`
+  + `&price=${price}`
+  + `&total=${total}`;
 
-  const url =
-    "https://script.google.com/macros/s/AKfycbyQltu3k7X5w9b3xgu21OLK-nluDTx2NwURVbVpgRzS84B0KYjdKp7I_u9uScELbyRz/exec"
-    + `?batch=${batch.bottles}x${batch.size}L`
-    + `&customer=${name}`
-    + `&litres=${litres}`
-    + `&price=${price}`
-    + `&total=${total}`;
-
-  fetch(url);
-
-    alert("Sale recorded ✔");
-
-  renderBatches();
-
+  // Updated fetch with proper settings to stop the CORS error
+  fetch(url, {
+    method: 'GET',
+    mode: 'no-cors', // This tells the browser: "Don't worry about the response, just send it."
+  })
+  .then(() => {
+    alert("Sale recorded and sent to Sheets!");
+    renderBatches(); // Refresh the screen
+  })
+  .catch(err => {
+    console.error("Error sending data:", err);
+    alert("Failed to send data to Sheets.");
+  });
 }
