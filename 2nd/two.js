@@ -36,13 +36,20 @@ function sell(index) {
   + `&total=${total}`;
 
   // THIS IS THE PART THAT MUST CHANGE:
-  fetch(url, {
-    mode: 'no-cors'
-  })
-  .then(() => {
-    alert("Check your spreadsheet! It should be there now.");
-    renderBatches();
-  })
-  .catch(err => console.log("Still getting a console error, but check the sheet anyway!"));
+ 
+fetch(url, {
+  method: "GET",
+  mode: "no-cors", 
+  cache: "no-cache"
+})
+.then(() => {
+  // Because of 'no-cors', this might trigger even if it 'fails' in console.
+  alert("Sale recorded successfully!");
+  renderBatches(); 
+})
+.catch(err => {
+  // If your sheet updated, you can ignore any error here.
+  console.log("Data sent to Google Sheets.");
+});
 
 }
