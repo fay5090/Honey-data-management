@@ -28,23 +28,21 @@ function sell(index) {
   });
 
   // THE FIX IS HERE
-  const url = "https://script.google.com/macros/s/AKfycbwLws4Ve9UWKinyH6cSqNyd9oBiQ71es1_0E4-sFOlmOUeX7Q-BmPw5DjHIfn4rWugH/exec"
+    const url = "https://script.google.com/macros/s/AKfycbyF4mN0umsrSU3foFfg42H57PM3YtRms6IR1eoaGaL4BVBB2evfpIK_0SeJuVrSo9M5/exec"
   + `?batch=${encodeURIComponent(batch.bottles + "x" + batch.size + "L")}`
   + `&customer=${encodeURIComponent(name)}`
   + `&litres=${litres}`
   + `&price=${price}`
   + `&total=${total}`;
 
-  // Updated fetch with proper settings to stop the CORS error
-   fetch(url, {
-  method: "GET",
-  mode: "no-cors",
-  credentials: "omit"
-})
-.then(() => {
-  alert("Sale recorded! Check your spreadsheet.");
-  renderBatches(); 
-})
-.catch(err => console.log("Ignore this error if data arrived:", err));
+  // THIS IS THE PART THAT MUST CHANGE:
+  fetch(url, {
+    mode: 'no-cors'
+  })
+  .then(() => {
+    alert("Check your spreadsheet! It should be there now.");
+    renderBatches();
+  })
+  .catch(err => console.log("Still getting a console error, but check the sheet anyway!"));
 
 }
